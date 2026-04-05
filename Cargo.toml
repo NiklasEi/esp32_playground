@@ -1,0 +1,47 @@
+[package]
+edition      = "2024"
+name         = "my-esp-project"
+rust-version = "1.88"
+version      = "0.1.0"
+
+[[bin]]
+name = "my-esp-project"
+path = "./src/bin/main.rs"
+test = false
+
+[[test]]
+harness = false
+name    = "hello_test"
+
+[lib]
+test = false
+
+[dependencies]
+esp-hal = { version = "~1.0", features = ["esp32", "unstable"] }
+esp-println = { version = "0.14", default-features = false, features = ["uart", "esp32"] }
+
+esp-bootloader-esp-idf = { version = "0.4.0", features = ["esp32"] }
+
+critical-section = "1.2.0"
+dht-sensor = "0.3.0"
+embedded-hal = "1.0.0"
+
+[dev-dependencies]
+embedded-test = { version = "0.7.0", features = [
+  "defmt",
+  "xtensa-semihosting",
+] }
+
+[profile.dev]
+# Rust debug is too slow.
+# For debug builds always builds with some optimization
+opt-level = "s"
+
+[profile.release]
+codegen-units    = 1     # LLVM can perform better optimizations using a single thread
+debug            = 2
+debug-assertions = false
+incremental      = false
+lto              = 'fat'
+opt-level        = 's'
+overflow-checks  = false
